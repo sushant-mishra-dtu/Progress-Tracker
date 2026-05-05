@@ -78,24 +78,64 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen p-8 font-sans cyber-grid text-slate-200">
-      <div className="max-w-6xl mx-auto">
-        <header className="mb-12 border-b border-slate-800 pb-6 flex justify-between items-end">
-          <div>
-            <h1 className="text-3xl font-bold mb-2 tracking-tight">Hardware AI Roadmap Tracker</h1>
-            <p className="text-slate-500 font-mono text-sm uppercase tracking-widest">System Status: <span className="text-cyan-400 glow-active font-bold px-2">ONLINE</span></p>
-          </div>
-          <button onClick={() => {setToken(''); localStorage.removeItem('token')}} className="text-amber-500 border border-amber-500/50 px-4 py-2 rounded text-sm hover:bg-amber-500 hover:text-slate-900 transition-colors font-mono">
-            LOGOUT
-          </button>
-        </header>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {weeks.map(week => (
-            <WeekCard key={week.id} week={week} token={token} API_URL={API_URL} refresh={fetchRoadmap} />
-          ))}
+    <div className="bg-slate-900 text-slate-200 font-sans min-h-screen cyber-grid selection:bg-cyan-400 selection:text-slate-900">
+      
+      {/* TopAppBar from Stitch */}
+      <header className="fixed top-0 w-full border-b border-slate-800 bg-slate-950 font-sans tracking-tight text-sm flex justify-between items-center px-6 h-14 z-50">
+        <div className="flex items-center gap-4">
+          <span className="text-lg font-bold tracking-tighter text-cyan-400 uppercase">Hardware AI Sprint</span>
         </div>
-      </div>
+        <div className="hidden md:flex items-center gap-6 text-slate-400 font-mono text-[12px]">
+          <div className="flex items-center gap-2">
+            <span className="text-cyan-400 font-bold glow-active px-2 rounded">ONLINE</span>
+            <span className="text-slate-500">SYSTEM STATUS</span>
+          </div>
+          <div className="h-4 w-px bg-slate-800"></div>
+          <div className="flex items-center gap-2">
+            <span className="text-cyan-400 font-bold">{weeks.filter(w => w.status === 'COMPLETED').length}/12</span>
+            <span className="text-slate-500">DELIVERABLES</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-4 text-cyan-400">
+          <button onClick={() => {setToken(''); localStorage.removeItem('token')}} className="hover:text-cyan-300 transition-colors uppercase font-mono text-[11px] tracking-widest border border-cyan-400/30 px-3 py-1 rounded">
+            Logout
+          </button>
+        </div>
+      </header>
+
+      {/* SideNavBar from Stitch */}
+      <nav className="fixed left-0 top-14 h-screen w-64 border-r border-slate-800 bg-slate-950 font-mono uppercase text-[11px] tracking-widest flex flex-col pt-4 z-40 hidden md:flex">
+        <div className="px-6 pb-6 border-b border-slate-800 mb-4">
+          <div className="text-cyan-400 font-black mb-1 text-sm">H/W ENG</div>
+          <div className="text-slate-500 text-[10px]">V-90 SPRINT</div>
+        </div>
+        <div className="flex-1 px-2 space-y-1">
+          <a className="bg-slate-800/50 text-cyan-400 border-l-4 border-cyan-400 px-4 py-3 flex items-center gap-3 transition-all" href="#">
+            <span className="material-symbols-outlined text-[18px]">route</span>
+            <span>Roadmap</span>
+          </a>
+          <a className="text-slate-500 px-4 py-3 flex items-center gap-3 hover:bg-slate-800/30 hover:text-slate-200 transition-all" href="#">
+            <span className="material-symbols-outlined text-[18px]">developer_board</span>
+            <span>Silicon Bench</span>
+          </a>
+        </div>
+      </nav>
+
+      {/* Main Content Canvas from Stitch */}
+      <main className="pt-14 md:pl-64 min-h-screen">
+        <div className="p-8 max-w-7xl mx-auto">
+          <header className="mb-8">
+            <h1 className="text-3xl font-bold text-slate-200 mb-2">Roadmap Tracker</h1>
+            <p className="font-mono text-[18px] text-slate-400">Execution Phase</p>
+          </header>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+            {weeks.map(week => (
+              <WeekCard key={week.id} week={week} token={token} API_URL={API_URL} refresh={fetchRoadmap} />
+            ))}
+          </div>
+        </div>
+      </main>
     </div>
   )
 }
