@@ -78,14 +78,14 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate p-8 text-white font-inter">
+    <div className="min-h-screen p-8 font-sans cyber-grid text-slate-200">
       <div className="max-w-6xl mx-auto">
-        <header className="mb-12 border-b border-charcoal_border pb-6 flex justify-between items-end">
+        <header className="mb-12 border-b border-slate-800 pb-6 flex justify-between items-end">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Hardware AI Roadmap Tracker</h1>
-            <p className="text-[#475569] font-mono text-sm uppercase tracking-widest">System Status: <span className="text-cyan glow-cyan">ONLINE</span></p>
+            <h1 className="text-3xl font-bold mb-2 tracking-tight">Hardware AI Roadmap Tracker</h1>
+            <p className="text-slate-500 font-mono text-sm uppercase tracking-widest">System Status: <span className="text-cyan-400 glow-active font-bold px-2">ONLINE</span></p>
           </div>
-          <button onClick={() => {setToken(''); localStorage.removeItem('token')}} className="text-amber border border-amber px-4 py-2 rounded text-sm hover:bg-amber hover:text-slate transition-colors font-mono">
+          <button onClick={() => {setToken(''); localStorage.removeItem('token')}} className="text-amber-500 border border-amber-500/50 px-4 py-2 rounded text-sm hover:bg-amber-500 hover:text-slate-900 transition-colors font-mono">
             LOGOUT
           </button>
         </header>
@@ -135,10 +135,10 @@ function WeekCard({ week, token, API_URL, refresh }) {
   }
 
   return (
-    <div className={`relative bg-charcoal rounded border ${isLocked ? 'border-charcoal_border opacity-50 stripe-overlay' : isInProgress ? 'border-cyan glow-cyan' : 'border-charcoal_border'} p-6 flex flex-col h-full transition-all`}>
+    <div className={`relative rounded p-6 flex flex-col h-full transition-all ${isLocked ? 'bg-[#1e293b] border border-[#334155] striped-bg grayscale opacity-60 pointer-events-none' : isInProgress ? 'bg-[#1e293b] border border-cyan-400 glow-active border-l-4 border-l-cyan-400' : 'bg-[#1e293b] border border-[#334155]'}`}>
       <div className="flex justify-between items-start mb-4">
-        <h2 className="text-xl font-semibold">{week.title}</h2>
-        <span className={`font-mono text-xs px-2 py-1 rounded tracking-widest ${isLocked ? 'bg-[#334155] text-slate' : isCompleted ? 'bg-cyan text-slate' : 'bg-transparent border border-cyan text-cyan'}`}>
+        <h2 className="text-xl font-semibold text-slate-200">{week.title}</h2>
+        <span className={`font-mono text-xs px-2 py-1 rounded tracking-widest ${isLocked ? 'bg-slate-800 text-slate-500' : isCompleted ? 'bg-cyan-400/20 text-cyan-400' : 'bg-transparent border border-cyan-400 text-cyan-400'}`}>
           {week.status}
         </span>
       </div>
@@ -153,29 +153,29 @@ function WeekCard({ week, token, API_URL, refresh }) {
       {isInProgress && (
         <form onSubmit={submitCompletion} className="mt-4 flex flex-col gap-3 flex-grow">
           <div>
-            <label className="text-xs font-mono text-cyan mb-1 block">DELIVERABLE_LINK *</label>
-            <input required value={link} onChange={e=>setLink(e.target.value)} type="url" placeholder="https://..." className="w-full bg-slate border border-charcoal_border text-white p-2 rounded text-sm focus:border-cyan outline-none" />
+            <label className="text-[11px] font-mono text-cyan-400 mb-1 block tracking-widest">DELIVERABLE_LINK *</label>
+            <input required value={link} onChange={e=>setLink(e.target.value)} type="url" placeholder="https://..." className="w-full bg-slate-900 border border-slate-700 text-slate-200 p-2 rounded text-sm focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 outline-none" />
           </div>
           
-          <div className="pt-2 border-t border-charcoal_border">
-            <label className="text-xs font-mono text-amber mb-2 block">SILICON_BENCH (OPTIONAL)</label>
+          <div className="pt-2 mt-2 border-t border-slate-800">
+            <label className="text-[11px] font-mono text-amber-500 mb-2 block tracking-widest">SILICON_BENCH (OPTIONAL)</label>
             <div className="grid grid-cols-2 gap-2">
-              <input value={benchmarks.power_mw} onChange={e=>setBenchmarks({...benchmarks, power_mw: e.target.value})} type="number" step="0.1" placeholder="Power (mW)" className="bg-slate border border-charcoal_border text-white p-2 rounded text-xs outline-none focus:border-amber" />
-              <input value={benchmarks.area_luts} onChange={e=>setBenchmarks({...benchmarks, area_luts: e.target.value})} type="number" placeholder="LUTs" className="bg-slate border border-charcoal_border text-white p-2 rounded text-xs outline-none focus:border-amber" />
-              <input value={benchmarks.area_dsps} onChange={e=>setBenchmarks({...benchmarks, area_dsps: e.target.value})} type="number" placeholder="DSPs" className="bg-slate border border-charcoal_border text-white p-2 rounded text-xs outline-none focus:border-amber" />
-              <input value={benchmarks.timing_slack_ns} onChange={e=>setBenchmarks({...benchmarks, timing_slack_ns: e.target.value})} type="number" step="0.01" placeholder="Slack (ns)" className="bg-slate border border-charcoal_border text-white p-2 rounded text-xs outline-none focus:border-amber" />
+              <input value={benchmarks.power_mw} onChange={e=>setBenchmarks({...benchmarks, power_mw: e.target.value})} type="number" step="0.1" placeholder="Power (mW)" className="bg-slate-900 border border-slate-700 text-slate-200 p-2 rounded text-xs outline-none focus:border-amber-500" />
+              <input value={benchmarks.area_luts} onChange={e=>setBenchmarks({...benchmarks, area_luts: e.target.value})} type="number" placeholder="LUTs" className="bg-slate-900 border border-slate-700 text-slate-200 p-2 rounded text-xs outline-none focus:border-amber-500" />
+              <input value={benchmarks.area_dsps} onChange={e=>setBenchmarks({...benchmarks, area_dsps: e.target.value})} type="number" placeholder="DSPs" className="bg-slate-900 border border-slate-700 text-slate-200 p-2 rounded text-xs outline-none focus:border-amber-500" />
+              <input value={benchmarks.timing_slack_ns} onChange={e=>setBenchmarks({...benchmarks, timing_slack_ns: e.target.value})} type="number" step="0.01" placeholder="Slack (ns)" className="bg-slate-900 border border-slate-700 text-slate-200 p-2 rounded text-xs outline-none focus:border-amber-500" />
             </div>
           </div>
 
-          <button type="submit" className="mt-auto w-full bg-transparent border border-cyan text-cyan py-2 rounded hover:bg-cyan hover:text-slate font-mono text-sm tracking-widest transition-colors">
+          <button type="submit" className="mt-4 w-full bg-transparent border border-cyan-400 text-cyan-400 py-2 rounded hover:bg-cyan-400/10 font-mono text-sm tracking-widest transition-colors flex items-center justify-center gap-2">
             SUBMIT_PROOF
           </button>
         </form>
       )}
 
       {isLocked && (
-        <div className="mt-auto pt-4 flex justify-center">
-          <span className="text-[#475569] font-mono text-sm">AWAITING_PREV_WEEK</span>
+        <div className="mt-auto pt-4 flex justify-center opacity-50">
+          <span className="text-slate-400 font-mono text-xs tracking-widest uppercase">AWAITING_PREV_WEEK</span>
         </div>
       )}
     </div>
