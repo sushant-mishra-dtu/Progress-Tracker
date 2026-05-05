@@ -10,7 +10,18 @@ from datetime import datetime, timedelta
 from jose import JWTError, jwt
 import bcrypt
 
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI(title="Hardware AI Roadmap Tracker")
+
+# Allow requests from the React frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins (can be restricted to Vercel URL later)
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 Base.metadata.create_all(bind=engine)
 
