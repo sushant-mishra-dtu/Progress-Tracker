@@ -1,121 +1,184 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useState, useEffect } from 'react'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [weeks, setWeeks] = useState([])
+  const [token, setToken] = useState(localStorage.getItem('token') || '')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+
+  // Read the VITE_API_BASE_URL or default to localhost for local testing
+  const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+
+  const handleLogin = async (e) => {
+    e.preventDefault()
+    try {
+      const formData = new URLSearchParams()
+      formData.append('username', 'admin')
+      formData.append('password', password)
+
+      const response = await fetch(`${API_URL}/api/token`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: formData
+      })
+
+      if (!response.ok) throw new Error("Invalid password")
+      
+      const data = await response.json()
+      setToken(data.access_token)
+      localStorage.setItem('token', data.access_token)
+      setError('')
+    } catch (err) {
+      setError(err.message)
+    }
+  }
+
+  const fetchRoadmap = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/roadmap`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      if (response.status === 401) {
+        setToken('')
+        localStorage.removeItem('token')
+        return
+      }
+      const data = await response.json()
+      setWeeks(data)
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  useEffect(() => {
+    if (token) fetchRoadmap()
+  }, [token])
+
+  if (!token) {
+    return (
+      <div className="min-h-screen bg-slate flex items-center justify-center p-4">
+        <div className="bg-charcoal p-8 rounded border border-charcoal_border w-full max-w-md">
+          <h1 className="text-cyan font-mono text-xl mb-6 tracking-widest text-center">SYSTEM_LOGIN</h1>
+          <form onSubmit={handleLogin} className="flex flex-col gap-4">
+            <input 
+              type="password" 
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              className="bg-slate border border-charcoal_border text-white p-3 rounded font-mono focus:outline-none focus:border-cyan focus:glow-cyan transition-all"
+              placeholder="ENTER_MASTER_PASSWORD"
+            />
+            {error && <div className="text-amber text-sm font-mono">{error}</div>}
+            <button type="submit" className="bg-transparent border border-cyan text-cyan py-3 rounded hover:glow-cyan font-mono transition-all uppercase tracking-widest">
+              Authenticate
+            </button>
+          </form>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="min-h-screen bg-slate p-8 text-white font-inter">
+      <div className="max-w-6xl mx-auto">
+        <header className="mb-12 border-b border-charcoal_border pb-6 flex justify-between items-end">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">Hardware AI Roadmap Tracker</h1>
+            <p className="text-[#475569] font-mono text-sm uppercase tracking-widest">System Status: <span className="text-cyan glow-cyan">ONLINE</span></p>
+          </div>
+          <button onClick={() => {setToken(''); localStorage.removeItem('token')}} className="text-amber border border-amber px-4 py-2 rounded text-sm hover:bg-amber hover:text-slate transition-colors font-mono">
+            LOGOUT
+          </button>
+        </header>
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {weeks.map(week => (
+            <WeekCard key={week.id} week={week} token={token} API_URL={API_URL} refresh={fetchRoadmap} />
+          ))}
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      </div>
+    </div>
+  )
+}
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+function WeekCard({ week, token, API_URL, refresh }) {
+  const isLocked = week.status === 'LOCKED'
+  const isCompleted = week.status === 'COMPLETED'
+  const isInProgress = week.status === 'IN_PROGRESS'
+
+  const [link, setLink] = useState('')
+  const [benchmarks, setBenchmarks] = useState({ power_mw: '', area_luts: '', area_dsps: '', timing_slack_ns: '' })
+  
+  const submitCompletion = async (e) => {
+    e.preventDefault()
+    if (!link) return alert("Deliverable link is required by The One Rule.")
+
+    if (benchmarks.power_mw) {
+       await fetch(`${API_URL}/api/weeks/${week.id}/benchmarks`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({
+            power_mw: parseFloat(benchmarks.power_mw),
+            area_luts: parseInt(benchmarks.area_luts),
+            area_dsps: parseInt(benchmarks.area_dsps),
+            timing_slack_ns: parseFloat(benchmarks.timing_slack_ns)
+          })
+       })
+    }
+
+    await fetch(`${API_URL}/api/weeks/${week.id}/complete`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ deliverable_link: link })
+    })
+
+    refresh()
+  }
+
+  return (
+    <div className={`relative bg-charcoal rounded border ${isLocked ? 'border-charcoal_border opacity-50 stripe-overlay' : isInProgress ? 'border-cyan glow-cyan' : 'border-charcoal_border'} p-6 flex flex-col h-full transition-all`}>
+      <div className="flex justify-between items-start mb-4">
+        <h2 className="text-xl font-semibold">{week.title}</h2>
+        <span className={`font-mono text-xs px-2 py-1 rounded tracking-widest ${isLocked ? 'bg-[#334155] text-slate' : isCompleted ? 'bg-cyan text-slate' : 'bg-transparent border border-cyan text-cyan'}`}>
+          {week.status}
+        </span>
+      </div>
+
+      {isCompleted && (
+        <div className="mt-4 flex-grow">
+          <p className="text-sm text-[#475569] font-mono mb-2">DELIVERABLE_LINK:</p>
+          <a href={week.deliverable_link} target="_blank" rel="noreferrer" className="text-cyan underline text-sm truncate block">{week.deliverable_link}</a>
+        </div>
+      )}
+
+      {isInProgress && (
+        <form onSubmit={submitCompletion} className="mt-4 flex flex-col gap-3 flex-grow">
+          <div>
+            <label className="text-xs font-mono text-cyan mb-1 block">DELIVERABLE_LINK *</label>
+            <input required value={link} onChange={e=>setLink(e.target.value)} type="url" placeholder="https://..." className="w-full bg-slate border border-charcoal_border text-white p-2 rounded text-sm focus:border-cyan outline-none" />
+          </div>
+          
+          <div className="pt-2 border-t border-charcoal_border">
+            <label className="text-xs font-mono text-amber mb-2 block">SILICON_BENCH (OPTIONAL)</label>
+            <div className="grid grid-cols-2 gap-2">
+              <input value={benchmarks.power_mw} onChange={e=>setBenchmarks({...benchmarks, power_mw: e.target.value})} type="number" step="0.1" placeholder="Power (mW)" className="bg-slate border border-charcoal_border text-white p-2 rounded text-xs outline-none focus:border-amber" />
+              <input value={benchmarks.area_luts} onChange={e=>setBenchmarks({...benchmarks, area_luts: e.target.value})} type="number" placeholder="LUTs" className="bg-slate border border-charcoal_border text-white p-2 rounded text-xs outline-none focus:border-amber" />
+              <input value={benchmarks.area_dsps} onChange={e=>setBenchmarks({...benchmarks, area_dsps: e.target.value})} type="number" placeholder="DSPs" className="bg-slate border border-charcoal_border text-white p-2 rounded text-xs outline-none focus:border-amber" />
+              <input value={benchmarks.timing_slack_ns} onChange={e=>setBenchmarks({...benchmarks, timing_slack_ns: e.target.value})} type="number" step="0.01" placeholder="Slack (ns)" className="bg-slate border border-charcoal_border text-white p-2 rounded text-xs outline-none focus:border-amber" />
+            </div>
+          </div>
+
+          <button type="submit" className="mt-auto w-full bg-transparent border border-cyan text-cyan py-2 rounded hover:bg-cyan hover:text-slate font-mono text-sm tracking-widest transition-colors">
+            SUBMIT_PROOF
+          </button>
+        </form>
+      )}
+
+      {isLocked && (
+        <div className="mt-auto pt-4 flex justify-center">
+          <span className="text-[#475569] font-mono text-sm">AWAITING_PREV_WEEK</span>
+        </div>
+      )}
+    </div>
   )
 }
 
