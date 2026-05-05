@@ -56,19 +56,19 @@ function App() {
 
   if (!token) {
     return (
-      <div className="min-h-screen bg-slate flex items-center justify-center p-4">
-        <div className="bg-charcoal p-8 rounded border border-charcoal_border w-full max-w-md">
-          <h1 className="text-cyan font-mono text-xl mb-6 tracking-widest text-center">SYSTEM_LOGIN</h1>
+      <div className="min-h-screen cyber-grid flex items-center justify-center p-4">
+        <div className="bg-[#1e293b] p-8 rounded border border-slate-700 w-full max-w-md">
+          <h1 className="text-cyan-400 font-mono text-xl mb-6 tracking-widest text-center">SYSTEM_LOGIN</h1>
           <form onSubmit={handleLogin} className="flex flex-col gap-4">
             <input 
               type="password" 
               value={password}
               onChange={e => setPassword(e.target.value)}
-              className="bg-slate border border-charcoal_border text-white p-3 rounded font-mono focus:outline-none focus:border-cyan focus:glow-cyan transition-all"
+              className="bg-slate-900 border border-slate-700 text-slate-200 p-3 rounded font-mono focus:outline-none focus:border-cyan-400 focus:glow-active transition-all"
               placeholder="ENTER_MASTER_PASSWORD"
             />
-            {error && <div className="text-amber text-sm font-mono">{error}</div>}
-            <button type="submit" className="bg-transparent border border-cyan text-cyan py-3 rounded hover:glow-cyan font-mono transition-all uppercase tracking-widest">
+            {error && <div className="text-amber-500 text-sm font-mono">{error}</div>}
+            <button type="submit" className="bg-transparent border border-cyan-400 text-cyan-400 py-3 rounded hover:glow-active font-mono transition-all uppercase tracking-widest">
               Authenticate
             </button>
           </form>

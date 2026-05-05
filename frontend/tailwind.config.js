@@ -6,18 +6,6 @@ export default {
   ],
   theme: {
     extend: {
-      colors: {
-        slate: '#0f172a',
-        charcoal: '#1e293b',
-        charcoal_border: '#334155',
-        charcoal_hover: '#475569',
-        cyan: {
-          DEFAULT: '#22d3ee',
-          glow: 'rgba(34, 211, 238, 0.2)'
-        },
-        amber: '#f59e0b',
-        indigo: '#6366f1'
-      },
       fontFamily: {
         inter: ['Inter', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
